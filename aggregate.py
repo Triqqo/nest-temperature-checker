@@ -10,10 +10,10 @@ def list_data_files() -> list[PosixPath]:
     return data_files
 
 
-def get_temperature_data(data: list[PosixPath]) -> list[dict]:
+def get_temperature_data_from_files(files: list[PosixPath]) -> list[dict]:
     temperature_data: list[dict] = []
 
-    for file in data:
+    for file in files:
         with open(str(file)) as csv_file:
             reader = csv.reader(csv_file)
             for row in reader:
@@ -32,7 +32,7 @@ def get_temperature_exceeding_threshold(temperature_data: list[dict], threshold:
     temp_entry: dict
     for temp_entry in temperature_data:
         temperature = temp_entry.get('MaxValue')
-        if temp_entry.get('MaxValue') > threshold:
+        if temperature > threshold:
             print(f"Temperature exceeded threshold on {temp_entry.get('Time')}, measured: {temperature}")
             temperature_exceeded.append(temp_entry)
 
@@ -50,7 +50,7 @@ def write_result_csv(data: list[dict], filename: str):
 def main():
     data_files = list_data_files()
 
-    temperature_data = get_temperature_data(data_files)
+    temperature_data = get_temperature_data_from_files(data_files)
     
     temperature_exceeded = get_temperature_exceeding_threshold(temperature_data=temperature_data, threshold=26.5)
 
